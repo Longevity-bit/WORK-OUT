@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gym Log — Bulanan</title>
+<style>
+:root{
+  --navy:#12243a;--cardio:#dceeff;--rest:#fff3c4;--line:#c9d3df;
+  --text:#182331;--muted:#667487;--bg:#eef3f8;--white:#fff;--shadow:0 8px 24px rgba(18,36,58,.09);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
+.container{max-width:1600px;margin:0 auto;padding:16px}
+.topbar{background:var(--navy);color:#fff;border-radius:18px;padding:18px 20px;box-shadow:var(--shadow);margin-bottom:14px}
+.title{font-size:24px;font-weight:800;margin:0 0 4px}.subtitle{opacity:.82;font-size:13px}
+.controls{background:#fff;border-radius:14px;box-shadow:var(--shadow);padding:12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px}
+select,button,input,textarea{font:inherit}
+select{border:1px solid #bcc8d5;border-radius:9px;padding:8px;background:#fff}
+button{border:1px solid #bcc8d5;background:#fff;color:var(--navy);padding:8px 12px;border-radius:9px;cursor:pointer;font-weight:750}
+button.primary{background:var(--navy);color:#fff;border-color:var(--navy)}
+.status{margin-left:auto;color:var(--muted);font-size:12px}
+.archive{background:#fff;border-radius:14px;box-shadow:var(--shadow);padding:14px;margin-bottom:14px}
+.archive h2{font-size:16px;margin:0 0 10px}
+.archive-list{display:flex;gap:8px;overflow:auto;padding-bottom:3px}
+.archive-item{min-width:150px;padding:9px;border:1px solid var(--line);border-radius:10px;background:#f8fafc}
+.archive-item strong{display:block}.archive-item span{font-size:11px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.panel{background:#fff;border-radius:14px;box-shadow:var(--shadow);padding:14px}
+.panel h2{font-size:16px;margin:0 0 10px}.target{padding:11px;border-radius:10px;background:#eef5fb;font-weight:800}
+.schedule{display:grid;grid-template-columns:repeat(7,1fr);gap:7px}
+.sday{background:#f7f9fb;border:1px solid var(--line);border-radius:9px;padding:8px;font-size:11px}
+.sday b{display:block;margin-bottom:3px}
+.log{display:grid;gap:12px}
+.day-card{background:#fff;border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+.day-head{display:grid;grid-template-columns:130px 100px 1fr;gap:8px;align-items:center;background:var(--navy);color:#fff;padding:10px 12px}
+.day-card.cardio .day-head{background:#315f8a}.day-card.rest .day-head{background:#7b6a29}
+.day-head .date{font-weight:800}.day-head .dow{font-size:12px;opacity:.85}.day-head .session{font-weight:800;text-align:right}
+.day-body{padding:10px}
+.table-wrap{overflow:auto}
+table{width:100%;border-collapse:collapse;min-width:1150px}
+th{background:#f0f4f8;padding:8px 6px;border:1px solid var(--line);font-size:11px;text-align:center}
+td{border:1px solid var(--line);padding:5px;vertical-align:middle}
+td.num{width:38px;text-align:center;font-weight:800;background:#f7f9fb}
+td.exercise{min-width:190px}
+td input,td textarea{width:100%;border:1px solid #d4dde6;border-radius:7px;padding:7px;font-size:11px;background:#fff}
+td textarea{min-height:32px;resize:vertical}
+.set-cell{display:flex;gap:5px;align-items:center;justify-content:center;min-width:145px}
+.set-cell input{width:50%;min-width:58px}
+.set-head{line-height:1.15}
+
+.cardio-box{background:var(--cardio);border-radius:10px;padding:10px;margin-bottom:9px;text-align:center;font-weight:800}
+.rest-box{background:var(--rest);border-radius:10px;padding:25px;text-align:center;font-weight:800}
+.note{font-size:11px;color:var(--muted);margin-top:8px}
+@media(max-width:900px){
+  .container{padding:10px}.grid{grid-template-columns:1fr}.schedule{grid-template-columns:repeat(2,1fr)}
+  .day-head{grid-template-columns:95px 70px 1fr}.title{font-size:20px}
+}
+@media print{
+  .controls,.archive,.grid{display:none}.container{max-width:none;padding:0}
+  .day-card{box-shadow:none;break-inside:avoid;margin-bottom:10px}
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="topbar">
+    <div class="title">🏋️ Gym Log — Bulanan</div>
+    <div class="subtitle">Setiap arsip adalah 1 bulan kalender penuh: tanggal 01 sampai hari terakhir bulan tersebut.</div>
+  </div>
+
+  <div class="controls">
+    <b>Bulan:</b>
+    <select id="month"></select>
+    <b>Tahun:</b>
+    <select id="year"></select>
+    <button class="primary" onclick="openPeriod()">📂 Buka Bulan</button>
+    <button onclick="saveAll()">💾 Simpan</button>
+    <button onclick="window.print()">🖨️ Print</button>
+    <div class="status" id="status">Auto-save aktif</div>
+  </div>
+
+  <section class="archive">
+    <h2>🗄️ ARSIP BULAN</h2>
+    <div id="archiveList" class="archive-list"></div>
+  </section>
+
+  <div class="grid">
+    <section class="panel">
+      <h2>🔥 TARGET</h2>
+      <div class="target">4× WEIGHT TRAINING + 2× CARDIO / WEEK</div>
+    </section>
+    <section class="panel">
+      <h2>📅 WEEKLY SCHEDULE</h2>
+      <div class="schedule">
+        <div class="sday"><b>Rabu</b>💪/🦵 Leg Day</div>
+        <div class="sday"><b>Kamis</b>🏃 Cardio / Recovery</div>
+        <div class="sday"><b>Jumat</b>🦸 Chest + Triceps</div>
+        <div class="sday"><b>Sabtu</b>🪽 Back + Biceps</div>
+        <div class="sday"><b>Minggu</b>💤 Full Rest</div>
+        <div class="sday"><b>Senin</b>🛡️ Shoulders + Arms</div>
+        <div class="sday"><b>Selasa</b>🏃 Cardio / Recovery</div>
+      </div>
+    </section>
+  </div>
+
+  <main id="log" class="log"></main>
+</div>
+
+<script>
+const STORE="gym_month_archives_v3";
+const months=["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+const days=["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
+const pattern={
+  0:["💤 Full Rest","rest"],
+  1:["🛡️ Shoulders + Arms","workout"],
+  2:["🏃 Cardio Log","cardio"],
+  3:["💪/🦵 Leg Day","workout"],
+  4:["🏃 Cardio Log","cardio"],
+  5:["🦸 Chest + Triceps","workout"],
+  6:["🪽 Back + Biceps","workout"]
+};
+
+function pad(n){return String(n).padStart(2,"0")}
+function periodKey(y,m){return `${y}-${pad(m+1)}`}
+function loadStore(){try{return JSON.parse(localStorage.getItem(STORE)||"{}")}catch(e){return {}}}
+function saveStore(s){localStorage.setItem(STORE,JSON.stringify(s))}
+function current(){return {y:+document.getElementById("year").value,m:+document.getElementById("month").value}}
+function dateKey(d){return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`}
+function esc(v){return String(v??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+function inp(k,p=""){return `<input data-key="${esc(k)}" placeholder="${esc(p)}">`}
+function area(k){return `<textarea data-key="${esc(k)}"></textarea>`}
+
+function init(){
+  const ms=document.getElementById("month"),ys=document.getElementById("year");
+  months.forEach((m,i)=>ms.add(new Option(m,i)));
+  for(let y=2024;y<=2036;y++)ys.add(new Option(y,y));
+  ms.value=9;ys.value=2026;
+  render();
+}
+function openPeriod(){render()}
+function daysInMonth(y,m){return new Date(y,m+1,0).getDate()}
+function getDates(y,m){
+  const n=daysInMonth(y,m), arr=[];
+  for(let i=1;i<=n;i++)arr.push(new Date(y,m,i));
+  return arr;
+}
+function getArchive(key){const s=loadStore();return s[key]||{data:{},meta:{}}}
+function saveAll(){
+  const {y,m}=current(),key=periodKey(y,m),store=loadStore(),old=getArchive(key),data={...old.data};
+  document.querySelectorAll("[data-key]").forEach(el=>data[el.dataset.key]=el.value);
+  const count=Object.values(data).filter(v=>String(v).trim()!=="").length;
+  store[key]={data,meta:{savedAt:new Date().toISOString(),count}};
+  saveStore(store);renderArchives();
+  document.getElementById("status").textContent="Tersimpan ✓ "+new Date().toLocaleTimeString("id-ID");
+}
+function restore(key){
+  const rec=getArchive(key);
+  document.querySelectorAll("[data-key]").forEach(el=>{if(rec.data[el.dataset.key]!==undefined)el.value=rec.data[el.dataset.key]});
+}
+function renderArchives(){
+  const box=document.getElementById("archiveList"),s=loadStore(),keys=Object.keys(s).sort().reverse();
+  if(!keys.length){box.innerHTML='<span style="font-size:12px;color:#667487">Arsip tersimpan akan muncul di sini.</span>';return}
+  box.innerHTML=keys.map(k=>{
+    const [y,mm]=k.split("-").map(Number), rec=s[k];
+    return `<button class="archive-item" onclick="go('${k}')"><strong>${months[mm-1]} ${y}</strong><span>01–${daysInMonth(y,mm-1)} ${months[mm-1]} • ${rec.meta?.count||0} input</span></button>`;
+  }).join("");
+}
+function go(k){
+  const [y,mm]=k.split("-").map(Number);
+  document.getElementById("year").value=y;document.getElementById("month").value=mm-1;render();
+}
+
+function workoutHTML(d){
+  const p=dateKey(d);
+  let rows="";
+  for(let ex=1;ex<=7;ex++){
+    const k=`${p}-ex${ex}`;
+    rows+=`<tr>
+      <td class="num">${ex}</td>
+      <td class="exercise">${inp(k+"-name","Nama exercise")}</td>
+      <td><div class="set-cell">
+        ${inp(k+"-b1","kg")}${inp(k+"-r1","rep")}
+      </div></td>
+      <td><div class="set-cell">
+        ${inp(k+"-b2","kg")}${inp(k+"-r2","rep")}
+      </div></td>
+      <td><div class="set-cell">
+        ${inp(k+"-b3","kg")}${inp(k+"-r3","rep")}
+      </div></td>
+      <td><div class="set-cell">
+        ${inp(k+"-b4","kg")}${inp(k+"-r4","rep")}
+      </div></td>
+      <td>${area(k+"-note")}</td>
+    </tr>`;
+  }
+  return `<div class="table-wrap"><table>
+    <thead><tr>
+      <th>#</th><th>Exercise</th>
+      <th class="set-head">Set 1<br><span style="font-weight:500">kg + reps</span></th>
+      <th class="set-head">Set 2<br><span style="font-weight:500">kg + reps</span></th>
+      <th class="set-head">Set 3<br><span style="font-weight:500">kg + reps</span></th>
+      <th class="set-head">Set 4<br><span style="font-weight:500">kg + reps</span></th>
+      <th>Catatan</th>
+    </tr></thead><tbody>${rows}</tbody></table></div>
+    <div class="note">Setiap kolom Set berisi 2 pengisian: beban (kg) + reps, tetapi tetap dianggap satu kesatuan.</div>`;
+}
+function cardioHTML(d){
+  const p=dateKey(d);
+  return `<div class="cardio-box">🏃 CARDIO</div>
+  <div class="table-wrap"><table><thead><tr><th>Speed</th><th>Incline</th><th>Jarak</th><th>Durasi</th><th>Kalori</th><th>Catatan</th></tr></thead>
+  <tbody><tr><td>${inp(p+"-speed","km/h")}</td><td>${inp(p+"-incline","%")}</td><td>${inp(p+"-distance","km")}</td><td>${inp(p+"-duration","menit")}</td><td>${inp(p+"-calories","kcal")}</td><td>${area(p+"-note")}</td></tr></tbody></table></div>`;
+}
+function restHTML(){return `<div class="rest-box">💤 FULL REST</div>`}
+
+function render(){
+  const {y,m}=current(),key=periodKey(y,m),dates=getDates(y,m);
+  document.getElementById("log").innerHTML=dates.map(d=>{
+    const [session,kind]=pattern[d.getDay()];
+    return `<section class="day-card ${kind}">
+      <div class="day-head">
+        <div class="date">${dateKey(d)}</div><div class="dow">${days[d.getDay()]}</div><div class="session">${session}</div>
+      </div>
+      <div class="day-body">${kind==="workout"?workoutHTML(d):kind==="cardio"?cardioHTML(d):restHTML()}</div>
+    </section>`;
+  }).join("");
+  restore(key);
+  document.querySelectorAll("[data-key]").forEach(el=>el.addEventListener("input",saveAll));
+  renderArchives();
+  document.getElementById("status").textContent=`Arsip aktif: 01 ${months[m]} ${y} → ${pad(daysInMonth(y,m))} ${months[m]} ${y}`;
+}
+init();
+</script>
+</body>
+</html>
