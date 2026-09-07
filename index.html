@@ -56,6 +56,9 @@ td textarea{min-height:32px;resize:vertical}
 .cardio-box{background:var(--cardio);border-radius:10px;padding:10px;margin-bottom:9px;text-align:center;font-weight:800}
 .rest-box{background:var(--rest);border-radius:10px;padding:25px;text-align:center;font-weight:800}
 .note{font-size:11px;color:var(--muted);margin-top:8px}
+.exercise-actions{display:flex;gap:7px;align-items:center;margin-top:9px;flex-wrap:wrap}
+.exercise-actions button{padding:7px 10px;font-size:11px}
+
 @media(max-width:900px){
   .container{padding:10px}.grid{grid-template-columns:1fr}.schedule{grid-template-columns:repeat(2,1fr)}
   .day-head{grid-template-columns:95px 70px 1fr}.title{font-size:20px}
@@ -70,7 +73,7 @@ td textarea{min-height:32px;resize:vertical}
 <div class="container">
   <div class="topbar">
     <div class="title">🏋️ Gym Log — Bulanan</div>
-    <div class="subtitle">Setiap arsip adalah 1 bulan kalender penuh: tanggal 01 sampai hari terakhir bulan tersebut. Klik tanggal untuk buka/tutup hasil latihan.</div>
+    <div class="subtitle">Setiap arsip adalah 1 bulan kalender penuh. Saat halaman dibuka, bulan & tahun otomatis mengikuti tanggal kalender saat ini.</div>
   </div>
 
   <div class="controls">
@@ -89,7 +92,7 @@ td textarea{min-height:32px;resize:vertical}
   <section class="archive">
     <h2>🗄️ ARSIP BULAN</h2>
     <div id="archiveList" class="archive-list"></div>
-    <div class="note">💡 Klik header tanggal untuk buka/tutup hasil latihan. Tanggal hari ini otomatis terbuka.</div>
+    <div class="note">💡 Saat dibuka, Gym Log otomatis masuk ke bulan & tahun saat ini. Klik header tanggal untuk buka/tutup hasil latihan. Pada workout day, gunakan ➕ Tambah Exercise atau ➖ Hapus Exercise.</div>
   </section>
 
   <div class="grid">
@@ -141,8 +144,15 @@ function area(k){return `<textarea data-key="${esc(k)}"></textarea>`}
 function init(){
   const ms=document.getElementById("month"),ys=document.getElementById("year");
   months.forEach((m,i)=>ms.add(new Option(m,i)));
-  for(let y=2024;y<=2036;y++)ys.add(new Option(y,y));
-  ms.value=9;ys.value=2026;
+  const currentYear=new Date().getFullYear();
+  const minYear=Math.min(2024,currentYear-5);
+  const maxYear=Math.max(2036,currentYear+5);
+  for(let y=minYear;y<=maxYear;y++)ys.add(new Option(y,y));
+
+  // Saat halaman dibuka, selalu tampilkan bulan & tahun kalender saat ini.
+  const now=new Date();
+  ms.value=now.getMonth();
+  ys.value=now.getFullYear();
   render();
 }
 function openPeriod(){render()}
@@ -178,29 +188,55 @@ function go(k){
   document.getElementById("year").value=y;document.getElementById("month").value=mm-1;render();
 }
 
-function workoutHTML(d){
-  const p=dateKey(d);
-  let rows="";
-  for(let ex=1;ex<=7;ex++){
-    const k=`${p}-ex${ex}`;
-    rows+=`<tr>
+function exerciseRowHTML(d, ex){
+  const p=`${dateKey(d)}-ex${ex}`;
+  return `<tr data-ex-row="${ex}">
       <td class="num">${ex}</td>
-      <td class="exercise">${inp(k+"-name","Nama exercise")}</td>
-      <td><div class="set-cell">
-        ${inp(k+"-b1","kg")}${inp(k+"-r1","rep")}
-      </div></td>
-      <td><div class="set-cell">
-        ${inp(k+"-b2","kg")}${inp(k+"-r2","rep")}
-      </div></td>
-      <td><div class="set-cell">
-        ${inp(k+"-b3","kg")}${inp(k+"-r3","rep")}
-      </div></td>
-      <td><div class="set-cell">
-        ${inp(k+"-b4","kg")}${inp(k+"-r4","rep")}
-      </div></td>
-      <td>${area(k+"-note")}</td>
+      <td class="exercise">${inp(p+"-name","Nama exercise")}</td>
+      <td><div class="set-cell">${inp(p+"-b1","kg")}${inp(p+"-r1","rep")}</div></td>
+      <td><div class="set-cell">${inp(p+"-b2","kg")}${inp(p+"-r2","rep")}</div></td>
+      <td><div class="set-cell">${inp(p+"-b3","kg")}${inp(p+"-r3","rep")}</div></td>
+      <td><div class="set-cell">${inp(p+"-b4","kg")}${inp(p+"-r4","rep")}</div></td>
+      <td>${area(p+"-note")}</td>
     </tr>`;
+}
+
+function renumberExerciseRows(card){
+  const rows=[...card.querySelectorAll("tbody tr[data-ex-row]")];
+  rows.forEach((row,i)=>{
+    const n=i+1;
+    row.dataset.exRow=n;
+    const num=row.querySelector(".num");
+    if(num) num.textContent=n;
+    row.querySelectorAll("[data-key]").forEach(el=>{
+      el.dataset.key=el.dataset.key.replace(/-ex\d+(-)/, "-ex"+n+"$1");
+    });
+  });
+}
+
+function addExercise(card){
+  const d=new Date(`${card.dataset.date}T00:00:00`);
+  const tbody=card.querySelector("tbody");
+  if(!tbody) return;
+  const current=tbody.querySelectorAll("tr[data-ex-row]").length;
+  tbody.insertAdjacentHTML("beforeend", exerciseRowHTML(d,current+1));
+  bindAutoSave();
+}
+
+function removeExercise(card){
+  const rows=card.querySelectorAll("tbody tr[data-ex-row]");
+  if(rows.length<=1){
+    alert("Minimal harus ada 1 exercise.");
+    return;
   }
+  rows[rows.length-1].remove();
+  renumberExerciseRows(card);
+  saveAll();
+}
+
+function workoutHTML(d){
+  let rows="";
+  for(let ex=1;ex<=7;ex++) rows+=exerciseRowHTML(d,ex);
   return `<div class="table-wrap"><table>
     <thead><tr>
       <th>#</th><th>Exercise</th>
@@ -210,7 +246,11 @@ function workoutHTML(d){
       <th class="set-head">Set 4<br><span style="font-weight:500">kg + reps</span></th>
       <th>Catatan</th>
     </tr></thead><tbody>${rows}</tbody></table></div>
-    <div class="note">Setiap kolom Set berisi 2 pengisian: beban (kg) + reps, tetapi tetap dianggap satu kesatuan.</div>`;
+    <div class="exercise-actions">
+      <button type="button" onclick="addExercise(this.closest('.day-card'))">➕ Tambah Exercise</button>
+      <button type="button" onclick="removeExercise(this.closest('.day-card'))">➖ Hapus Exercise</button>
+    </div>
+    <div class="note">Setiap Set berisi 2 pengisian: beban (kg) + reps. Exercise bisa ditambah atau dihapus sesuai kebutuhan.</div>`;
 }
 function cardioHTML(d){
   const p=dateKey(d);
