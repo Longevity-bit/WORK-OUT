@@ -33,6 +33,10 @@ button.primary{background:var(--navy);color:#fff;border-color:var(--navy)}
 .sday b{display:block;margin-bottom:3px}
 .log{display:grid;gap:12px}
 .day-card{background:#fff;border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+.day-card.collapsed .day-body{display:none}
+.day-head{cursor:pointer;user-select:none;position:relative}
+.day-head:hover{filter:brightness(.98)}
+.day-head .toggle{font-size:16px;opacity:.9;margin-left:8px}
 .day-head{display:grid;grid-template-columns:130px 100px 1fr;gap:8px;align-items:center;background:var(--navy);color:#fff;padding:10px 12px}
 .day-card.cardio .day-head{background:#315f8a}.day-card.rest .day-head{background:#7b6a29}
 .day-head .date{font-weight:800}.day-head .dow{font-size:12px;opacity:.85}.day-head .session{font-weight:800;text-align:right}
@@ -66,7 +70,7 @@ td textarea{min-height:32px;resize:vertical}
 <div class="container">
   <div class="topbar">
     <div class="title">🏋️ Gym Log — Bulanan</div>
-    <div class="subtitle">Setiap arsip adalah 1 bulan kalender penuh: tanggal 01 sampai hari terakhir bulan tersebut.</div>
+    <div class="subtitle">Setiap arsip adalah 1 bulan kalender penuh: tanggal 01 sampai hari terakhir bulan tersebut. Klik tanggal untuk buka/tutup hasil latihan.</div>
   </div>
 
   <div class="controls">
@@ -76,6 +80,8 @@ td textarea{min-height:32px;resize:vertical}
     <select id="year"></select>
     <button class="primary" onclick="openPeriod()">📂 Buka Bulan</button>
     <button onclick="saveAll()">💾 Simpan</button>
+    <button onclick="openAll()">🔓 Buka Semua</button>
+    <button onclick="closeAll()">🔒 Tutup Semua</button>
     <button onclick="window.print()">🖨️ Print</button>
     <div class="status" id="status">Auto-save aktif</div>
   </div>
@@ -83,6 +89,7 @@ td textarea{min-height:32px;resize:vertical}
   <section class="archive">
     <h2>🗄️ ARSIP BULAN</h2>
     <div id="archiveList" class="archive-list"></div>
+    <div class="note">💡 Klik header tanggal untuk buka/tutup hasil latihan. Tanggal hari ini otomatis terbuka.</div>
   </section>
 
   <div class="grid">
@@ -213,13 +220,39 @@ function cardioHTML(d){
 }
 function restHTML(){return `<div class="rest-box">💤 FULL REST</div>`}
 
+
+function toggleDay(card){
+  card.classList.toggle("collapsed");
+  const icon=card.querySelector(".toggle");
+  if(icon) icon.textContent=card.classList.contains("collapsed")?"▸":"▾";
+}
+function openAll(){
+  document.querySelectorAll(".day-card").forEach(card=>{
+    card.classList.remove("collapsed");
+    const icon=card.querySelector(".toggle");
+    if(icon) icon.textContent="▾";
+  });
+}
+function closeAll(){
+  document.querySelectorAll(".day-card").forEach(card=>{
+    card.classList.add("collapsed");
+    const icon=card.querySelector(".toggle");
+    if(icon) icon.textContent="▸";
+  });
+}
+
 function render(){
   const {y,m}=current(),key=periodKey(y,m),dates=getDates(y,m);
   document.getElementById("log").innerHTML=dates.map(d=>{
     const [session,kind]=pattern[d.getDay()];
-    return `<section class="day-card ${kind}">
-      <div class="day-head">
-        <div class="date">${dateKey(d)}</div><div class="dow">${days[d.getDay()]}</div><div class="session">${session}</div>
+    const now=new Date();
+    const isToday=now.getFullYear()===d.getFullYear() && now.getMonth()===d.getMonth() && now.getDate()===d.getDate();
+    const openClass=isToday ? "" : " collapsed";
+    const icon=isToday ? "▾" : "▸";
+    return `<section class="day-card ${kind}${openClass}" data-date="${dateKey(d)}">
+      <div class="day-head" onclick="toggleDay(this.parentElement)">
+        <div class="date">${dateKey(d)}</div><div class="dow">${days[d.getDay()]}</div>
+        <div class="session">${session}<span class="toggle">${icon}</span></div>
       </div>
       <div class="day-body">${kind==="workout"?workoutHTML(d):kind==="cardio"?cardioHTML(d):restHTML()}</div>
     </section>`;
