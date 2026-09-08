@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="id">
 <head>
@@ -15,7 +16,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800&family=Bebas+Neue&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800;900&family=Permanent+Marker&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#05090e;--panel:#0b131c;--line:#263746;--line2:#334959;--text:#f2f6f9;--muted:#91a0ac;--green:#c9ff36;--cyan:#55d8ff;--red:#ff5550;--gold:#f0c84d;--shadow:0 18px 46px rgba(0,0,0,.34)}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:"Segoe UI","Trebuchet MS",Arial,sans-serif}
@@ -64,53 +65,61 @@ body.light .side-btn.active{background:#e2ecd8;}
 @media(max-width:520px){.analysis-grid{grid-template-columns:repeat(2,1fr)}.report-grid{grid-template-columns:1fr 1fr}.chart-wrap{height:220px}.stats-toolbar{grid-template-columns:1fr}.progress-toolbar{grid-template-columns:1fr}.progress-toolbar select:last-child{grid-column:auto}}
 .install-btn{padding:9px 12px;border-radius:10px;border:1px solid var(--line2);background:var(--green);color:#071008;font-weight:800}.install-btn.hidden{display:none!important}
 
+/* =========================
+   WORK-OUT VISUAL REFRESH
+   ========================= */
+html,body{font-family:"Barlow Condensed","Segoe UI",Arial,sans-serif}
+.brand-title,.section-title,.stat-label,.toolbar-label,.schedule-panel,.archive,.side-btn,.report-card,.analysis-card,.metric,.cal-day{font-family:"Barlow Condensed","Segoe UI",Arial,sans-serif}
+.hero{height:250px!important;min-height:250px!important;background:
+  linear-gradient(90deg,rgba(4,8,12,.18),rgba(4,8,12,.10),rgba(4,8,12,.28)),
+  url("./hero-banner.png") center/cover no-repeat!important;
+  border-radius:20px!important;
+  box-shadow:var(--shadow)!important}
 
-/* ===== 2026-09-09 WL VISUAL REDESIGN ===== */
-:root{
-  --bg:#020609;--panel:#081018;--panel2:#0d1720;--line:#1b2d3a;--line2:#2b4250;
-  --text:#f5f8fb;--muted:#8897a3;--green:#c9ff36;--green2:#9fe516;--cyan:#55d8ff;
-  --shadow:0 22px 60px rgba(0,0,0,.45);--radius:18px;
-  --ui:"Barlow Condensed","Arial Narrow","Segoe UI",sans-serif;--display:"Bebas Neue","Impact","Arial Narrow",sans-serif;
-}
-html,body{font-family:var(--ui)!important;background:#020609!important;letter-spacing:.01em}
-body{background:
-  radial-gradient(circle at 12% -10%,rgba(201,255,54,.12),transparent 30%),
-  radial-gradient(circle at 92% 10%,rgba(85,216,255,.08),transparent 28%),
-  linear-gradient(180deg,#03070a 0%,#061018 55%,#020609 100%)!important;
-}
-button,input,textarea,select{font-family:var(--ui)!important}
-#app{gap:0!important;background:linear-gradient(180deg,rgba(0,0,0,.18),transparent)}
-.content{padding:18px!important;max-width:1540px;width:100%;margin:auto}
-.hero{
-  min-height:250px!important;height:250px!important;border-radius:22px!important;border:1px solid #203543!important;
-  background-image:linear-gradient(90deg,rgba(2,6,9,.82) 0%,rgba(2,6,9,.38) 44%,rgba(2,6,9,.72) 100%),url("./hero-banner.png")!important;
-  background-size:cover!important;background-position:center!important;box-shadow:var(--shadow),0 0 0 1px rgba(201,255,54,.04) inset!important;
-}
-.hero-overlay{position:absolute;inset:0;background:radial-gradient(circle at 78% 50%,transparent 0 28%,rgba(0,0,0,.2) 70%),linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.2));pointer-events:none}
-.hero-badge{position:absolute;left:22px;top:18px;font-size:10px;font-weight:800;letter-spacing:1.8px;color:var(--green);display:flex;align-items:center;gap:8px;text-shadow:0 2px 12px #000}
-.pulse-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 14px rgba(201,255,54,.8)}
-.hero-copy{position:absolute;left:22px;bottom:18px;max-width:650px;text-shadow:0 3px 18px rgba(0,0,0,.8)}
-.hero-mini{font-size:11px;font-weight:700;letter-spacing:4px;color:#d8e0e4;margin-bottom:4px}
-.hero-title{font-family:var(--display);font-size:clamp(48px,7vw,92px);line-height:.82;letter-spacing:1px;color:#fff}
-.hero-title span{display:block;color:var(--green);text-shadow:0 0 16px rgba(201,255,54,.18)}
-.hero-sub{margin-top:12px;color:#f5f8fb;font-size:11px;letter-spacing:6px;font-weight:700}
-.hero-edge{position:absolute;right:20px;top:18px;text-align:right;color:#fff}.hero-edge span{display:block;font-family:var(--display);font-size:30px;color:var(--green);line-height:1}.hero-edge small{font-size:7px;letter-spacing:2.5px;color:#d5dde2}
-.stats{gap:10px!important;margin:12px 0!important}
-.stat,.view-card,.schedule-panel,.archive,.day-card{background:linear-gradient(145deg,rgba(13,23,32,.98),rgba(6,13,19,.96))!important;border:1px solid var(--line)!important;box-shadow:0 10px 28px rgba(0,0,0,.18)!important}
-.stat{border-radius:14px!important;min-height:78px!important}.stat-label,.section-meta,.toolbar-label{font-size:9px!important;letter-spacing:1.7px!important;font-weight:700}.stat-value{font-family:var(--display)!important;font-size:26px!important;letter-spacing:.7px}.month-stat .stat-value{font-size:20px!important}.stat-sub{font-size:8px!important;letter-spacing:1px;color:#71818d!important}
-.toolbar{background:rgba(6,13,19,.8)!important;border:1px solid var(--line)!important;border-radius:14px!important;padding:9px!important;backdrop-filter:blur(10px)}
-.primary,.btn-finish{background:var(--green)!important;color:#061006!important;border-color:var(--green)!important;font-weight:800!important}.logout{border-color:#60383a!important}
-.archive,.schedule-panel{border-radius:16px!important;overflow:hidden}.schedule{gap:8px!important}.sday{background:linear-gradient(145deg,#0e1922,#081119)!important;border:1px solid #1d3442!important;border-radius:12px!important;padding:12px!important;transition:.18s}.sday:hover{border-color:rgba(201,255,54,.5);transform:translateY(-1px)}.sday b{font-size:8px!important;letter-spacing:1.8px;color:#8ca0ad}.sday span{font-size:12px!important;font-weight:700;color:#eef4f7;margin-top:5px;display:block}
-.day-card{border-radius:16px!important;overflow:hidden}.day-head{background:linear-gradient(90deg,#0c1720,#091119)!important}.day-num{font-family:var(--display)!important;font-size:30px!important}.day-num small,.day-session small{font-family:var(--ui)!important;font-weight:700}.day-session{font-weight:800!important;letter-spacing:.5px}.workout-title h3{font-family:var(--display)!important;letter-spacing:.8px;font-size:25px!important}.workout-title p{font-size:10px!important;color:#7f929e!important}
-.exercise-table th,.cardio-table th{font-family:var(--ui)!important;font-weight:800!important;letter-spacing:1px!important}.exercise-table td,.cardio-table td{border-color:#1a2a35!important}.exercise-table input,.exercise-table textarea,.cardio-table input,.cardio-table textarea{background:#071019!important;border-color:#203645!important;border-radius:9px!important}.exercise-table input:focus,.exercise-table textarea:focus,.cardio-table input:focus,.cardio-table textarea:focus{border-color:var(--green)!important;box-shadow:0 0 0 2px rgba(201,255,54,.1)!important}
-.right-menu{background:linear-gradient(180deg,#061016 0%,#03080d 100%)!important;border-left:1px solid var(--line)!important;box-shadow:-12px 0 35px rgba(0,0,0,.2)}.right-photo{opacity:.48!important;filter:saturate(.8) contrast(1.15)}.menu-title{font-family:var(--display)!important;letter-spacing:3px!important;font-size:18px!important}.side-btn{border:1px solid transparent!important;background:transparent!important;border-radius:12px!important;transition:.18s}.side-btn:hover{background:#0c1821!important;border-color:#1e3341!important}.side-btn.active{background:linear-gradient(90deg,rgba(201,255,54,.18),rgba(201,255,54,.04))!important;border-color:rgba(201,255,54,.4)!important;box-shadow:inset 3px 0 0 var(--green),0 10px 24px rgba(0,0,0,.18)!important}.side-btn b{font-size:12px!important}.side-btn small{font-size:9px!important;color:#81919d!important}
-.view-card{border-radius:16px!important}.section-title{font-family:var(--display)!important;font-size:22px!important;letter-spacing:1.2px!important}.section-meta{color:#6f828e!important}
-.analysis-card,.chart-card,.report-card{background:linear-gradient(145deg,#0d1822,#09121a)!important;border-color:#1d3441!important;border-radius:14px!important}.analysis-card strong,.report-card strong{font-family:var(--display)!important;font-size:24px!important}.chart-title{font-family:var(--display)!important;font-size:17px!important;letter-spacing:1px!important}
-.footer{font-family:var(--ui)!important;border-top:1px solid #182833!important;color:#6f818c!important}
-.auth-card{background:linear-gradient(145deg,rgba(8,16,23,.96),rgba(3,8,12,.96))!important;border:1px solid #284150!important;box-shadow:var(--shadow)!important}.auth-brand{font-family:var(--display)!important;font-size:42px!important;letter-spacing:1.5px}.auth-sub{font-family:var(--ui)!important;letter-spacing:3px!important;color:var(--green)!important}
-@media(max-width:900px){.content{padding:10px!important}.hero{min-height:210px!important;height:210px!important}.hero-title{font-size:clamp(40px,11vw,70px)}.hero-sub{letter-spacing:3px}.hero-edge{right:14px;top:14px}.right-menu{background:rgba(4,10,14,.97)!important}.side-btn.active{box-shadow:inset 0 2px 0 var(--green)!important}.section-title{font-size:19px!important}}
-@media(max-width:520px){.hero{height:190px!important;min-height:190px!important;background-position:56% center!important}.hero-badge{left:13px;top:12px;font-size:8px;letter-spacing:1.2px}.hero-copy{left:13px;bottom:13px}.hero-mini{font-size:8px;letter-spacing:2.2px}.hero-title{font-size:48px}.hero-sub{font-size:8px;letter-spacing:2px;margin-top:8px}.hero-edge{display:none}.stats{grid-template-columns:1fr 1fr!important}.month-stat{grid-column:1/-1}.stat-value{font-size:22px!important}.side-btn b{font-size:8px!important}}
-@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+/* True light theme: remove remaining dark hard-coded surfaces. */
+body.light{
+  --bg:#f3f6f8;--panel:#ffffff;--line:#d6dee5;--line2:#b7c4ce;
+  --text:#18232d;--muted:#5b6a76;--green:#5d9900;--cyan:#007ea8;
+  --red:#c53333;--gold:#9b7600;--shadow:0 14px 32px rgba(24,39,52,.10);
+  background:linear-gradient(180deg,#eef3f6,#f9fbfc)!important;color:var(--text)!important}
+body.light .content,body.light .stats,body.light .toolbar,body.light .archive,body.light .schedule-panel,
+body.light .view-card,body.light .log-day,body.light .stat,body.light .chart-card,body.light .report-card,
+body.light .analysis-card,body.light .metric,body.light .progress-row,body.light .cal-day,body.light .rest-box,
+body.light .cardio-box,body.light table,body.light .schedule .sday{
+  background:#fff!important;color:#18232d!important;border-color:#d6dee5!important}
+body.light .right-menu{background:#edf2f5!important;border-left-color:#d6dee5!important}
+body.light .side-btn{background:transparent!important;color:#18232d!important;border-color:transparent!important}
+body.light .side-btn.active{background:#ddebcf!important;color:#18232d!important;border-color:#c1d9a9!important}
+body.light .side-btn small,body.light .muted,body.light .stat-sub,body.light .section-meta,body.light .setting-row small{color:#60707c!important}
+body.light input,body.light textarea,body.light select{
+  background:#fff!important;color:#18232d!important;border:1px solid #b9c7d0!important;box-shadow:none!important}
+body.light input::placeholder,body.light textarea::placeholder{color:#7b8994!important}
+body.light .metric label{color:#687782!important}
+body.light .metric strong{color:#5d9900!important}
+body.light .bar{background:#e6edf1!important}
+body.light .bar span{background:linear-gradient(90deg,#5d9900,#84bd24)!important}
+body.light .schedule .sday b{color:#63727d!important}
+body.light .schedule .sday span{color:#18232d!important}
+body.light .log-day .day-head,body.light .cardio-table th,body.light .workout-table th{background:#edf2f5!important;color:#18232d!important}
+body.light .workout-table td,body.light .cardio-table td{border-color:#dbe3e8!important}
+body.light .rest-box{color:#5b6a76!important}
+body.light .footer{color:#60707c!important}
+body.light .footer strong,body.light .footer span{color:#5d9900!important}
+body.light .theme-switch button{background:#fff!important;color:#18232d!important;border-color:#b7c4ce!important}
+body.light .theme-switch button.active{background:#5d9900!important;color:#fff!important;border-color:#5d9900!important}
+body.light .primary{background:#5d9900!important;color:#fff!important;border-color:#5d9900!important}
+body.light .logout{background:#fff!important;color:#c53333!important;border-color:#d9aaaa!important}
+body.light .hero{
+  /* Keep cinematic hero artwork unchanged in light mode. */
+  background:
+    linear-gradient(90deg,rgba(4,8,12,.18),rgba(4,8,12,.10),rgba(4,8,12,.28)),
+    url("./hero-banner.png") center/cover no-repeat!important;
+  color:#fff!important}
+
+/* Display accents: hand-lettered feel for selected emphasis, not body text. */
+.display-accent,.trend-up,.hero-slogan{font-family:"Permanent Marker",cursive!important}
+
+@media(max-width:900px){.hero{height:200px!important;min-height:200px!important}.display-accent,.hero-slogan{font-size:1.05em}}
 
 </style>
 <!-- navigation isolation fix: 2026-09-08 -->
@@ -132,7 +141,7 @@ button,input,textarea,select{font-family:var(--ui)!important}
 
 <div id="app">
   <main class="content">
-    <section class="hero"></section>
+    <section class="hero" aria-label="WORK-OUT hero banner"></section>
 
     <section class="stats">
       <div class="stat month-stat"><button class="month-arrow" onclick="changeMonth(-1)">‹</button><div class="month-center"><div class="stat-label">ACTIVE MONTH</div><div class="stat-value green" id="statMonth">—</div></div><button class="month-arrow" onclick="changeMonth(1)">›</button></div>
@@ -146,9 +155,9 @@ button,input,textarea,select{font-family:var(--ui)!important}
       <div class="toolbar"><div class="toolbar-label">MONTH</div><select id="month"></select><select id="year"></select><button class="primary" onclick="render()">Buka Bulan</button><button onclick="openAll()">🔓</button><button onclick="closeAll()">🔒</button><button onclick="window.print()">🖨️</button><button class="logout" onclick="logout()">Keluar</button><div class="status" id="status">Cloud Sync ✓</div></div>
       <section class="archive"><div class="section-head"><div class="section-title">🗄️ ARSIP BULAN</div><div class="section-meta">01 → AKHIR BULAN</div></div><div id="archiveList" class="archive-list"></div></section>
       <section class="schedule-panel"><div class="section-head"><div class="section-title">WEEKLY SCHEDULE</div><div class="section-meta">4× WEIGHT • 2× CARDIO • 1× REST • REST AFTER LEG DAY</div></div><div class="schedule">
-        <div class="sday"><b>SENIN</b><span>🏃 Cardio</span></div><div class="sday"><b>SELASA</b><span>🦵 Leg Day</span></div><div class="sday"><b>RABU</b><span>💤 Full Rest</span></div><div class="sday"><b>KAMIS</b><span>🦸 Chest + Triceps</span></div><div class="sday"><b>JUMAT</b><span>🪽 Back + Biceps</span></div><div class="sday"><b>SABTU</b><span>🏃 Cardio</span></div><div class="sday"><b>MINGGU</b><span>🛡️ Shoulders + Arms</span></div>
+        <div class="sday"><b>RABU</b><span>💪/🦵 Leg Day</span></div><div class="sday"><b>KAMIS</b><span>💤 Full Rest</span></div><div class="sday"><b>JUMAT</b><span>🦸 Chest + Triceps</span></div><div class="sday"><b>SABTU</b><span>🪽 Back + Biceps</span></div><div class="sday"><b>MINGGU</b><span>🏃 Cardio</span></div><div class="sday"><b>SENIN</b><span>🛡️ Shoulders + Arms</span></div><div class="sday"><b>SELASA</b><span>🏃 Cardio</span></div>
       </div></section>
-      <main id="log"<main id="log" class="log"></main>
+      <main id="log" class="log"></main>
     </section>
 
     <section id="view-progress" class="view hidden"><section class="view-card"><div class="section-head"><div class="section-title">📈 PROGRESS</div><div class="section-meta">PER EXERCISE • AUTO FROM LOG</div></div><div id="progressContent"></div></section></section>
@@ -172,12 +181,12 @@ button,input,textarea,select{font-family:var(--ui)!important}
 </div>
 
 <script>
-const SUPABASE_URL="https://cbxirgljwsxjoijqkzfh.supabase.co";
-const SUPABASE_KEY="sb_publishable_k13B7F6ptpU4UdJ1tnoftQ_K7-D9PvA";
+const SUPABASE_URL="YOUR_SUPABASE_PROJECT_URL";
+const SUPABASE_KEY="YOUR_SUPABASE_PUBLISHABLE_KEY";
 const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 const months=["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
 const days=["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
-const pattern={0:["🛡️ Shoulders + Arms","workout","Build rounder shoulders."],1:["🏃 Cardio","cardio","Keep moving."],2:["🦵 Leg Day","workout","Legs today, stronger tomorrow."],3:["💤 Full Rest","rest","Recovery is progress."],4:["🦸 Chest + Triceps","workout","Push harder."],5:["🪽 Back + Biceps","workout","Build a stronger back."],6:["🏃 Cardio","cardio","Keep moving."]};
+const pattern={0:["🏃 Cardio","cardio","Keep moving."],1:["🛡️ Shoulders + Arms","workout","Build rounder shoulders."],2:["🏃 Cardio","cardio","Keep moving."],3:["💪/🦵 Leg Day","workout","Legs today, stronger tomorrow."],4:["💤 Full Rest","rest","Recovery is progress."],5:["🦸 Chest + Triceps","workout","Push harder."],6:["🪽 Back + Biceps","workout","Build a stronger back."]};
 let timer=null,currentRows=[],allWorkoutRows=null,allCardioRows=null,selectedProgressExercise="",selectedProgressMetric="e1rm",statsMode="monthly",statsYear=new Date().getFullYear();
 
 function pad(n){return String(n).padStart(2,"0")}
