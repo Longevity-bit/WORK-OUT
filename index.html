@@ -5,6 +5,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#05090e">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="WORKOUT LOG">
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
+<link rel="apple-touch-icon" href="./icons/icon-192.png">
 <title>WORKOUT LOG — Cloud Sync</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -53,6 +60,7 @@ body.light .side-btn.active{background:#e2ecd8;}
 .progress-toolbar{display:grid;grid-template-columns:1.5fr 1fr .8fr;gap:8px;margin-bottom:10px}.progress-toolbar select,.stats-toolbar select{width:100%;background:#0f1821;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:9px;font-weight:800;font-size:10px}.analysis-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}.analysis-card{background:#101923;border:1px solid var(--line);border-radius:10px;padding:10px}.analysis-card label{display:block;font-size:8px;color:var(--muted);letter-spacing:1px}.analysis-card strong{display:block;font-size:17px;color:var(--green);margin-top:4px}.analysis-card small{display:block;color:#70808d;font-size:8px;margin-top:2px}.chart-card{background:#0d1720;border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:10px}.chart-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}.chart-title{font-size:10px;font-weight:900;letter-spacing:.8px}.chart-sub{font-size:8px;color:var(--muted);margin-top:2px}.trend-up{color:var(--green)!important}.trend-down{color:var(--red)!important}.trend-flat{color:var(--gold)!important}.chart-wrap{height:245px;margin-top:8px;overflow:hidden}.chart-wrap svg{width:100%;height:100%;display:block}.axis-label{font-size:7px;fill:#71818d}.grid-line{stroke:#1d2c38;stroke-width:1}.area-path{fill:rgba(201,255,54,.07);stroke:none}.line-path{fill:none;stroke:var(--green);stroke-width:2.8;stroke-linecap:round;stroke-linejoin:round}.point{fill:var(--green);stroke:#071017;stroke-width:2}.bar-rect{fill:var(--cyan);opacity:.8}.chart-empty{padding:36px 12px;text-align:center;color:#73818c;font-size:10px}.stats-toolbar{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}.period-switch{display:flex;gap:5px}.period-switch button{flex:1;background:#0f1821;color:#83919d;border:1px solid var(--line);border-radius:8px;padding:8px;font-size:9px;font-weight:900}.period-switch button.active{color:#0a0f14;background:var(--green);border-color:var(--green)}.report-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:10px}.report-card{background:#101923;border:1px solid var(--line);border-radius:10px;padding:10px}.report-card label{display:block;font-size:8px;color:var(--muted);letter-spacing:.8px}.report-card strong{display:block;font-size:16px;color:var(--green);margin-top:4px}.report-card small{display:block;color:#70808d;font-size:8px;margin-top:2px}.table-wrap{overflow:auto}.compare-table{width:100%;border-collapse:collapse;font-size:9px}.compare-table th,.compare-table td{border-bottom:1px solid #20303c;padding:8px 6px;text-align:right;white-space:nowrap}.compare-table th:first-child,.compare-table td:first-child{text-align:left}.compare-table th{color:#8ea0ad;font-size:8px;letter-spacing:.6px}.delta-up{color:var(--green);font-weight:900}.delta-down{color:var(--red);font-weight:900}.delta-flat{color:var(--gold);font-weight:900}.legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:7px;font-size:8px;color:#82909b}.legend span{display:inline-flex;align-items:center;gap:4px}.dot{width:7px;height:7px;border-radius:50%;background:var(--green)}
 @media(max-width:900px){.analysis-grid{grid-template-columns:repeat(2,1fr)}.report-grid{grid-template-columns:repeat(2,1fr)}.progress-toolbar{grid-template-columns:1fr 1fr}.progress-toolbar select:last-child{grid-column:1/-1}}
 @media(max-width:520px){.analysis-grid{grid-template-columns:repeat(2,1fr)}.report-grid{grid-template-columns:1fr 1fr}.chart-wrap{height:220px}.stats-toolbar{grid-template-columns:1fr}.progress-toolbar{grid-template-columns:1fr}.progress-toolbar select:last-child{grid-column:auto}}
+.install-btn{padding:9px 12px;border-radius:10px;border:1px solid var(--line2);background:var(--green);color:#071008;font-weight:800}.install-btn.hidden{display:none!important}
 </style>
 <!-- navigation isolation fix: 2026-09-08 -->
 </head>
@@ -98,7 +106,8 @@ body.light .side-btn.active{background:#e2ecd8;}
     <section id="view-progress" class="view hidden"><section class="view-card"><div class="section-head"><div class="section-title">📈 PROGRESS</div><div class="section-meta">PER EXERCISE • AUTO FROM LOG</div></div><div id="progressContent"></div></section></section>
     <section id="view-calendar" class="view hidden"><section class="view-card"><div class="section-head"><div class="section-title">📅 CALENDAR</div><div class="section-meta">AKTIVITAS BULANAN</div></div><div id="calendarContent"></div></section></section>
     <section id="view-statistics" class="view hidden"><section class="view-card"><div class="section-head"><div class="section-title">◔ STATISTICS</div><div class="section-meta">MONTHLY • YEARLY REPORT</div></div><div id="statisticsContent"></div></section></section>
-    <div style="display:none"></div><section id="view-settings" class="view hidden"><section class="view-card"><div class="section-head"><div class="section-title">⚙️ SETTINGS</div><div class="section-meta">GYM LOG</div></div><div class="setting-row"><div><b>Theme</b><small>Choose how the app looks</small></div><div class="theme-switch"><button id="themeDark" onclick="setTheme('dark')">🌙 Dark</button><button id="themeLight" onclick="setTheme('light')">☀️ White</button></div></div><div class="setting-row"><b>Cloud Sync</b><span>Aktif ✓</span></div><div class="setting-row"><b>Authentication</b><span>Supabase Auth</span></div><div class="setting-row"><b>Database</b><span>workouts + cardio_logs</span></div></section></section>
+    <div style="display:none"></div><section id="view-settings" class="view hidden"><section class="view-card"><div class="section-head"><div class="section-title">⚙️ SETTINGS</div><div class="section-meta">GYM LOG</div></div><div class="setting-row"><div><b>Theme</b><small>Choose how the app looks</small></div><div class="theme-switch"><button id="themeDark" onclick="setTheme('dark')">🌙 Dark</button><button id="themeLight" onclick="setTheme('light')">☀️ White</button></div></div><div class="setting-row"><div><b>Install App</b><small>Pasang WORKOUT LOG ke Home Screen Android</small></div><button id="installAppBtn" class="install-btn hidden" onclick="installPWA()">＋ Install App</button><span id="installStatus">Siap</span></div>
+<div class="setting-row"><b>Cloud Sync</b><span>Aktif ✓</span></div><div class="setting-row"><b>Authentication</b><span>Supabase Auth</span></div><div class="setting-row"><b>Database</b><span>workouts + cardio_logs</span></div></section></section>
 
     <footer class="footer"><strong>A BETTER VERSION OF YOU IS A FEW WORKOUTS AWAY.</strong><div>CONSISTENCY CREATES RESULTS <span>•</span> PROGRESS &gt; EGO</div></footer>
   </main>
@@ -399,6 +408,12 @@ async function renderStatistics(){
   }
  }catch(e){el.innerHTML=`<div class="chart-empty">Gagal memuat statistics: ${esc(e.message)}</div>`}
 }
+
+let deferredInstallPrompt=null;
+window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredInstallPrompt=e;const b=document.getElementById("installAppBtn");if(b)b.classList.remove("hidden")});
+window.addEventListener("appinstalled",()=>{deferredInstallPrompt=null;const b=document.getElementById("installAppBtn");if(b)b.classList.add("hidden");const t=document.getElementById("installStatus");if(t)t.textContent="Terpasang ✓"});
+async function installPWA(){if(!deferredInstallPrompt){const t=document.getElementById("installStatus");if(t)t.textContent="Gunakan menu ⋮ Chrome → Add to Home screen";return}deferredInstallPrompt.prompt();await deferredInstallPrompt.userChoice;deferredInstallPrompt=null;const b=document.getElementById("installAppBtn");if(b)b.classList.add("hidden")}
+if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));}
 
 sb.auth.getSession().then(({data})=>{if(data.session)showApp()});
 </script>
