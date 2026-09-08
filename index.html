@@ -129,7 +129,7 @@ const SUPABASE_KEY="sb_publishable_k13B7F6ptpU4UdJ1tnoftQ_K7-D9PvA";
 const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 const months=["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
 const days=["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
-const pattern={0:["🏃 Cardio","cardio","Keep moving."],1:["🛡️ Shoulders + Arms","workout","Build rounder shoulders."],2:["🏃 Cardio","cardio","Keep moving."],3:["💪/🦵 Leg Day","workout","Legs today, stronger tomorrow."],4:["💤 Full Rest","rest","Recovery is progress."],5:["🦸 Chest + Triceps","workout","Push harder."],6:["🪽 Back + Biceps","workout","Build a stronger back."]};
+const pattern={0:["🛡️ Shoulders + Arms", "workout", "Build rounder shoulders."],1:["🏃 Cardio", "cardio", "Keep moving."],2:["🦵 Leg Day", "workout", "Legs today, stronger tomorrow."],3:["💤 Full Rest", "rest", "Recovery is progress."],4:["🦸 Chest + Triceps", "workout", "Push harder."],5:["🪽 Back + Biceps","workout","Build a stronger back."],6:["🏃 Cardio", "cardio", "Keep moving."]};
 let timer=null,currentRows=[],allWorkoutRows=null,allCardioRows=null,selectedProgressExercise="",selectedProgressMetric="e1rm",statsMode="monthly",statsYear=new Date().getFullYear();
 
 function pad(n){return String(n).padStart(2,"0")}
